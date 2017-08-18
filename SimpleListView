@@ -1,0 +1,33 @@
+
+
+public class MainActivity extends AppCompatActivity {
+
+    //ListView 아이템에 표시될 사용자 데이터 string 타입 배열 정의
+    String[] str_list = {"List1", "List2", "List3"};
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        //Adapter 생성 후 ListView에 지정
+        /*  파라미터 -> context : 안드로이드 시스템에서 제공되는 어플리케이션 전역 환경 정보에 대한 인터페이스
+                        resource : View로 매핑될 Resource Id. "android.R.layout.simple_list_item_1"은 TextView 위젯으로 구성된 ListView 아이템 리소스 Id
+                        objects : 배열로 선언된 사용자 데이터   */
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, str_list);
+
+        ListView listView = (ListView)findViewById(R.id.listView);
+        listView.setAdapter(adapter);
+
+        //ListView Item Click Event
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override             //(adapterView, view, position, id)
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String strText = (String)adapterView.getItemAtPosition(i);
+                Toast.makeText(getApplicationContext(), strText, Toast.LENGTH_LONG).show();
+            }
+        });
+
+    }
+}
