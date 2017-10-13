@@ -1,0 +1,193 @@
+//MainActivity.java
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        ListView listView = (ListView) findViewById(R.id.listView);
+
+        TestAdapter adapter = new TestAdapter();
+        adapter.addItem(new TestItem("가나다", "123-4567-8910"));
+
+        listView.setAdapter(adapter);
+    }
+
+    // 데이터를 관리하기위한 어뎁터 추가
+    class TestAdapter extends BaseAdapter{
+
+        ArrayList<TestItem> items = new ArrayList<TestItem>();
+
+        // item이 몇개인지?
+        @Override
+        public int getCount() {
+            return items.size();
+        }
+
+        // 몇번째인지?
+        @Override
+        public Object getItem(int i) {
+            return items.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        public void addItem(TestItem item){
+            items.add(item);
+        }
+
+        //item이 화면에 보여질 뷰도 만들어라
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+
+            TestItemView tiView = new TestItemView((getApplicationContext()));
+
+            TestItem item = items.get(i);
+            tiView.setName(item.getName());
+            tiView.setMobile(item.getMobile());
+
+            return tiView;
+        }
+    }
+}
+
+
+---------------------------------------------
+//activity_main.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</RelativeLayout>
+
+
+---------------------------------------------
+//TestItem.java
+
+public class TestItem {
+
+    String name;
+    String mobile;
+
+    public TestItem(String name, String mobile) {
+        this.name = name;
+        this.mobile = mobile;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    @Override
+    public String toString() {
+        return "TestItem{" +
+                "name='" + name + '\'' +
+                ", mobile='" + mobile + '\'' +
+                '}';
+    }
+}
+
+
+---------------------------------------------
+//test_item.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@mipmap/ic_launcher" />
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="10dp">
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="이름"
+            android:textSize="30dp"
+            android:textColor="@color/colorPrimaryDark"/>
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="전화번호"
+            android:textSize="30dp"
+            android:textColor="@android:color/holo_orange_dark"/>
+
+    </LinearLayout>
+</LinearLayout>
+
+
+---------------------------------------------
+//TestItemView.java
+
+public class TestItemView extends LinearLayout {
+
+    TextView textView1, textView2;
+
+    public TestItemView(Context context) {
+        super(context);
+        init(context);
+    }
+
+    public TestItemView(Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+        init(context);
+    }
+
+    private void init(Context context){
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater.inflate(R.layout.test_item, this, true);
+
+        textView1 = (TextView) findViewById(R.id.textView1);
+        textView2 = (TextView) findViewById(R.id.textView2);
+    }
+
+    public void setName(String name){
+        textView1.setText(name);
+    }
+
+    public void setMobile(String mobile){
+        textView2.setText(mobile);
+    }
+}
