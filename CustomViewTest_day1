@@ -1,0 +1,82 @@
+//MainActivity.java
+
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        ListView listView = (ListView)findViewById(R.id.listView);
+
+    }
+
+    class TestAdapter extends BaseAdapter {
+
+        ArrayList<> items = new ArrayList<>();
+
+        @Override
+        public int getCount() {
+            return 0;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            return null;
+        }
+    }
+}
+
+
+-------------------------------------------------
+
+// activity_main.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/listView"></ListView>
+
+    </LinearLayout>
+
+
+</RelativeLayout>
+
+
+---------------------------------------------------------------------
+
+// TestItem.java
+
+public class TestItem {
+
+    String name;
+    String mobile;
+
+    public TestItem(String name, String mobile) {
+        this.name = name;
+        this.mobile = mobile;
+    }
+
+}
