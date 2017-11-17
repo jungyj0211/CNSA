@@ -1,0 +1,172 @@
+// MainActivity.java
+
+public class MainActivity extends AppCompatActivity {
+
+    Context context;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Button btn1 = (Button) findViewById(R.id.btn1);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(!Settings.canDrawOverlays(this)){
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+                startActivity(intent);
+            }
+        }
+
+
+        btn1.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if(Settings.canDrawOverlays(getApplicationContext())){
+                        Toast.makeText(getApplicationContext(), "true", Toast.LENGTH_SHORT).show();
+
+                        context = getApplicationContext();
+                        context.startService(new Intent(context, WindowService.class));
+                        return;
+
+                    }else
+                        Toast.makeText(getApplicationContext(), "false", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        Button btn2 = (Button) findViewById(R.id.btn2);
+        btn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Activity activity = getParent();
+                activity.stopService(new Intent(activity, WindowService.class));
+
+            }
+        });
+
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        super.onDestroy();
+    }
+}
+
+
+----------------------------------------------------------------------------------------------------------
+
+//activity_main.xml
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.yongjin.permissionstest.MainActivity">
+
+    <Button
+        android:id="@+id/btn1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:text="ON"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.407" />
+
+    <Button
+        android:id="@+id/btn2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="close"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/btn1"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintVertical_bias="0.803" />
+</android.support.constraint.ConstraintLayout>
+
+
+----------------------------------------------------------------------------------------------------------
+
+//WindowService.java
+
+public class WindowService extends Service {
+
+    WindowManager   mWindowManager = null;
+    View            mWindowLayout = null;
+
+    @Override
+    public int onStartCommand( Intent intent,
+                               int flags,
+                               int startId )
+    {
+
+        // 뷰 생성
+        ImageView floatingView = new ImageView(this);
+        floatingView.setImageResource(R.drawable.ic_sample);
+
+        // 윈도우 레이아웃 파라미터 생성 및 설정
+        WindowManager.LayoutParams mWindowLP = new WindowManager.LayoutParams();
+        mWindowLP = new WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_PHONE);
+        mWindowLP.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        mWindowLP.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        mWindowLP.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        mWindowLP.format = PixelFormat.TRANSLUCENT;
+
+        // 윈도우 생성
+        mWindowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        mWindowManager.addView(floatingView, mWindowLP);
+
+        // 터치 이벤트
+         floatingView.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+              Toast.makeText(getApplicationContext(), "터치됨",Toast.LENGTH_SHORT).show();
+          }
+        });
+
+        return super.onStartCommand( intent, flags, startId );
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        mWindowManager.removeView( mWindowLayout );
+        super.onDestroy();
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        // TODO: Return the communication channel to the service.
+        return null;
+    }
+}
+
+----------------------------------------------------------------------------------------------------------
+
+//window_layout.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<ImageView
+    android:id="@+id/info_text"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:src="@drawable/ic_sample" />
